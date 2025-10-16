@@ -4,70 +4,22 @@ server:
 spring:
   application:
     name: skydive-forecast-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: users
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/users/**
-          filters:
-            - StripPrefix=2
-        - id: locations
-          uri: http://localhost:8082
-          predicates:
-            - Path=/api/locations/**
-          filters:
-            - StripPrefix=2
-        - id: forecasts
-          uri: http://localhost:8083
-          predicates:
-            - Path=/api/forecasts/**
-          filters:
-            - StripPrefix=2
-        - id: notifications
-          uri: http://localhost:8084
-          predicates:
-            - Path=/api/notifications/**
-          filters:
-            - StripPrefix=2
-        - id: users-swagger
-          uri: http://localhost:8081
-          predicates:
-            - Path=/v3/api-docs/users
-          filters:
-            - RewritePath=/v3/api-docs/users, /v3/api-docs
-        - id: locations-swagger
-          uri: http://localhost:8082
-          predicates:
-            - Path=/v3/api-docs/locations
-          filters:
-            - RewritePath=/v3/api-docs/locations, /v3/api-docs
-        - id: forecasts-swagger
-          uri: http://localhost:8083
-          predicates:
-            - Path=/v3/api-docs/forecasts
-          filters:
-            - RewritePath=/v3/api-docs/forecasts, /v3/api-docs
-        - id: notifications-swagger
-          uri: http://localhost:8084
-          predicates:
-            - Path=/v3/api-docs/notifications
-          filters:
-            - RewritePath=/v3/api-docs/notifications, /v3/api-docs
+  profiles:
+    active: dev
 
 springdoc:
   api-docs:
+    path: /v3/api-docs
     enabled: true
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
     urls:
-      - name: users
+      - name: Users Service
         url: /v3/api-docs/users
-      - name: locations
+      - name: Analyses Service
+        url: /v3/api-docs/analyses
+      - name: Locations Service
         url: /v3/api-docs/locations
-      - name: forecasts
-        url: /v3/api-docs/forecasts
-      - name: notifications
-        url: /v3/api-docs/notifications
+  show-actuator: true
