@@ -1,5 +1,11 @@
 # Skydive Forecast - Gateway
 
+[![Java](https://img.shields.io/badge/Java-21-green?logo=openjdk)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+
 API Gateway for the Skydive Forecast microservices architecture, built with Spring Cloud Gateway and OpenAPI documentation aggregation.
 
 ## Overview
