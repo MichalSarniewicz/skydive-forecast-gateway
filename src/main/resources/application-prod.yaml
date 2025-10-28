@@ -2,35 +2,35 @@ spring:
   cloud:
     gateway:
       server:
-        webmvc:
+        webflux:
           routes:
             - id: users
-              uri: http://localhost:8081
+              uri: ${USER_SERVICE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/users/**
               filters:
                 - StripPrefix=2
             - id: analyses
-              uri: http://localhost:8082
+              uri: ${ANALYSIS_SERVICE_URL:http://localhost:8082}
               predicates:
                 - Path=/api/analyses/**
               filters:
                 - StripPrefix=2
             - id: locations
-              uri: http://localhost:8083
+              uri: ${LOCATION_SERVICE_URL:http://localhost:8083}
               predicates:
                 - Path=/api/locations/**
               filters:
                 - StripPrefix=2
             - id: users-swagger
-              uri: http://localhost:8081
+              uri: ${USER_SERVICE_URL:http://localhost:8081}
               predicates:
                 - Path=/v3/api-docs/users
             - id: analyses-swagger
-              uri: http://localhost:8082
+              uri: ${ANALYSIS_SERVICE_URL:http://localhost:8082}
               predicates:
                 - Path=/v3/api-docs/analyses
             - id: locations-swagger
-              uri: http://localhost:8083
+              uri: ${LOCATION_SERVICE_URL:http://localhost:8083}
               predicates:
                 - Path=/v3/api-docs/locations
