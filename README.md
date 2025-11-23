@@ -26,8 +26,10 @@ The gateway routes requests to the following microservices:
 - **Spring Boot**: 3.5.6
 - **Spring Cloud**: 2025.0.0
 - **Spring Cloud Gateway**: WebFlux
-- **SpringDoc OpenAPI**: 2.8.13
-- **Monitoring**: Actuator, Prometheus, Grafana, Loki, Zipkin
+- **Spring Cloud Config Client**: Centralized configuration
+- **Spring Cloud Consul Discovery**: Service discovery and registration
+- **SpringDoc OpenAPI**: 2.8.13 (Aggregated Swagger UI)
+- **Monitoring**: Actuator, Prometheus, Grafana, Loki, Tempo
 - **Build Tool**: Maven
 
 ## Getting Started
@@ -65,23 +67,22 @@ The application supports multiple profiles for different environments:
 - `test`: Testing environment
 - `prod`: Production environment
 
-### Environment-Specific Configuration
+### Service Discovery with Consul
 
-All profiles use the same microservice routing configuration. Service URLs can be configured via environment variables or default to local instances:
+The gateway uses Consul for automatic service discovery. Services are discovered using the `lb://` protocol:
 
-- Users Service: `${USER_SERVICE_URL:http://localhost:8081}`
-- Analyses Service: `${ANALYSIS_SERVICE_URL:http://localhost:8082}`
-- Locations Service: `${LOCATION_SERVICE_URL:http://localhost:8083}`
+- Users Service: `lb://user-service`
+- Analyses Service: `lb://analysis-service`
+- Locations Service: `lb://location-service`
 
-### Environment Variables
+No hardcoded URLs needed - services register themselves in Consul and are automatically discovered.
 
-You can override service URLs using environment variables:
+### Configuration Management
 
-```bash
-export USER_SERVICE_URL=http://users-service:8081
-export ANALYSIS_SERVICE_URL=http://analyses-service:8082
-export LOCATION_SERVICE_URL=http://locations-service:8083
-```
+Configuration is loaded from Spring Cloud Config Server:
+- **Config Server**: `http://config-server:8888`
+- **Profiles**: `dev`, `consul`, `swagger`
+- Configuration files stored in Git repository
 
 To run with a specific profile:
 ```bash
@@ -109,13 +110,10 @@ spring:
 
 ### API Documentation
 
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **OpenAPI Docs**: `http://localhost:8080/v3/api-docs`
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html` (Aggregated from all services)
+- **Consul UI**: `http://localhost:8500` (Service registry and health checks)
 
-The Swagger UI aggregates documentation from all microservices:
-- `/v3/api-docs/users` - Users Service API
-- `/v3/api-docs/analyses` - Analyses Service API
-- `/v3/api-docs/locations` - Locations Service API
+The Swagger UI provides a unified interface for all microservices APIs through the gateway routing.
 
 ## Security
 
@@ -151,16 +149,32 @@ skydive-forecast-gateway/
 
 ## Development
 
+### Prerequisites
+
+Before running the gateway, ensure these services are running:
+1. **Consul** (Port 8500) - Service discovery
+2. **Config Server** (Port 8888) - Configuration management
+3. **Microservices** (Ports 8081-8083) - Backend services
+
 ### Building
 
 ```bash
 mvn clean package
 ```
 
-### Running the JAR
+### Running Locally
 
-After building, you can run the application using:
+Update `bootstrap.yaml` to use localhost:
+```yaml
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8888
+    consul:
+      host: localhost
+```
 
+Then run:
 ```bash
 java -jar target/skydive-forecast-gateway-1.0.0-SNAPSHOT.jar
 ```
@@ -198,9 +212,9 @@ The service includes comprehensive monitoring capabilities:
 
 Application logs are automatically sent to Loki for centralized log aggregation.
 
-### Distributed Tracing (Zipkin)
+### Distributed Tracing (Tempo)
 
-- **Endpoint**: `http://localhost:9411`
+- **Endpoint**: `http://localhost:4318`
 - **Traces**: Request flows across services with timing information
 - **Sampling**: 100% of requests traced (configurable)
 
