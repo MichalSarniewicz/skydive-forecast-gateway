@@ -25,7 +25,7 @@ The gateway routes requests to the following microservices:
 - **Java**: 21
 - **Spring Boot**: 3.5.6
 - **Spring Cloud**: 2025.0.0
-- **Spring Cloud Gateway**: Server WebMVC
+- **Spring Cloud Gateway**: WebFlux
 - **SpringDoc OpenAPI**: 2.8.13
 - **Monitoring**: Actuator, Prometheus, Grafana, Loki, Zipkin
 - **Build Tool**: Maven
@@ -67,11 +67,21 @@ The application supports multiple profiles for different environments:
 
 ### Environment-Specific Configuration
 
-All profiles use the same microservice routing configuration, connecting to local instances:
+All profiles use the same microservice routing configuration. Service URLs can be configured via environment variables or default to local instances:
 
-- Users Service: `http://localhost:8081`
-- Analyses Service: `http://localhost:8082`
-- Locations Service: `http://localhost:8083`
+- Users Service: `${USER_SERVICE_URL:http://localhost:8081}`
+- Analyses Service: `${ANALYSIS_SERVICE_URL:http://localhost:8082}`
+- Locations Service: `${LOCATION_SERVICE_URL:http://localhost:8083}`
+
+### Environment Variables
+
+You can override service URLs using environment variables:
+
+```bash
+export USER_SERVICE_URL=http://users-service:8081
+export ANALYSIS_SERVICE_URL=http://analyses-service:8082
+export LOCATION_SERVICE_URL=http://locations-service:8083
+```
 
 To run with a specific profile:
 ```bash
@@ -123,14 +133,18 @@ skydive-forecast-gateway/
 │   ├── main/
 │   │   ├── java/com/skydiveforecast/
 │   │   │   ├── Application.java
-│   │   │   └── infrastructure/config/
-│   │   │       └── OpenApiConfig.java
+│   │   │   └── infrastructure/
+│   │   │       ├── adapter/
+│   │   │       └── config/
+│   │   │           └── OpenApiConfig.java
 │   │   └── resources/
 │   │       ├── application.yaml
 │   │       ├── application-dev.yaml
 │   │       ├── application-test.yaml
-│   │       └── application-prod.yaml
+│   │       ├── application-prod.yaml
+│   │       └── logback-spring.xml
 │   └── test/
+├── Dockerfile
 ├── pom.xml
 └── README.md
 ```
@@ -149,6 +163,22 @@ After building, you can run the application using:
 
 ```bash
 java -jar target/skydive-forecast-gateway-1.0.0-SNAPSHOT.jar
+```
+
+### Docker
+
+Build and run using Docker:
+
+```bash
+# Build the Docker image
+docker build -t skydive-forecast-gateway:latest .
+
+# Run the container
+docker run -p 8080:8080 \
+  -e USER_SERVICE_URL=http://users-service:8081 \
+  -e ANALYSIS_SERVICE_URL=http://analyses-service:8082 \
+  -e LOCATION_SERVICE_URL=http://locations-service:8083 \
+  skydive-forecast-gateway:latest
 ```
 
 ## Monitoring
