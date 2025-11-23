@@ -91,11 +91,11 @@ spring:
 
 | Path | Microservice | Port |
 |------|-------------|------|
-| `/api/users/**` | Users Service | 8081 |
-| `/api/analyses/**` | Analyses Service | 8082 |
-| `/api/locations/**` | Locations Service | 8083 |
+| `/api/v1/users/**` | Users Service | 8081 |
+| `/api/v1/analyses/**` | Analyses Service | 8082 |
+| `/api/v1/locations/**` | Locations Service | 8083 |
 
-**Note**: The gateway strips the first 2 path segments (`/api/{service}`) before forwarding to microservices.
+**Note**: The gateway strips the first 3 path segments (`/api/v1/{service}`) before forwarding to microservices.
 
 ### API Documentation
 
