@@ -22,15 +22,3 @@ spring:
                 - Path=/api/v1/locations/**
               filters:
                 - StripPrefix=3
-            - id: users-swagger
-              uri: ${USER_SERVICE_URL:http://localhost:8081}
-              predicates:
-                - Path=/v3/api-docs/users
-            - id: analyses-swagger
-              uri: ${ANALYSIS_SERVICE_URL:http://localhost:8082}
-              predicates:
-                - Path=/v3/api-docs/analyses
-            - id: locations-swagger
-              uri: ${LOCATION_SERVICE_URL:http://localhost:8083}
-              predicates:
-                - Path=/v3/api-docs/locations

@@ -36,12 +36,4 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    config-url: /v3/api-docs/swagger-config
-    urls:
-      - name: Users Service
-        url: /v3/api-docs/users
-      - name: Analyses Service
-        url: /v3/api-docs/analyses
-      - name: Locations Service
-        url: /v3/api-docs/locations
-  show-actuator: true
+  show-actuator: false
