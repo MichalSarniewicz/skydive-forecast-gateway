@@ -1,14 +1,22 @@
 package com.skydiveforecast.infrastructure.adapter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @RestController
 public class OpenApiAggregationController {
+
+    private static final Logger log = LoggerFactory.getLogger(OpenApiAggregationController.class);
+    private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
     private final WebClient webClient = WebClient.builder().build();
 
@@ -23,29 +31,49 @@ public class OpenApiAggregationController {
 
     @GetMapping(value = "/v3/api-docs/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getUsersApiDocs() {
-        return webClient.get()
-                .uri(userServiceUrl + "/v3/api-docs")
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(this::rewriteServers);
+        return fetchApiDocs(userServiceUrl, "users");
     }
 
     @GetMapping(value = "/v3/api-docs/analyses", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getAnalysesApiDocs() {
-        return webClient.get()
-                .uri(analysisServiceUrl + "/v3/api-docs")
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(this::rewriteServers);
+        return fetchApiDocs(analysisServiceUrl, "analyses");
     }
 
     @GetMapping(value = "/v3/api-docs/locations", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getLocationsApiDocs() {
+        return fetchApiDocs(locationServiceUrl, "locations");
+    }
+
+    private Mono<String> fetchApiDocs(String serviceUrl, String serviceName) {
         return webClient.get()
-                .uri(locationServiceUrl + "/v3/api-docs")
+                .uri(serviceUrl + "/v3/api-docs")
                 .retrieve()
                 .bodyToMono(String.class)
-                .map(this::rewriteServers);
+                .timeout(TIMEOUT)
+                .map(this::rewriteServers)
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    log.error("Error fetching API docs for {}: {} - {}", serviceName, e.getStatusCode(), e.getMessage());
+                    return Mono.just(createErrorApiDoc(serviceName, "Service returned error: " + e.getStatusCode()));
+                })
+                .onErrorResume(Exception.class, e -> {
+                    log.error("Error fetching API docs for {}: {}", serviceName, e.getMessage());
+                    return Mono.just(createErrorApiDoc(serviceName, "Service unavailable: " + e.getMessage()));
+                });
+    }
+
+    private String createErrorApiDoc(String serviceName, String errorMessage) {
+        return String.format("""
+                {
+                    "openapi": "3.0.1",
+                    "info": {
+                        "title": "%s API (Unavailable)",
+                        "description": "%s",
+                        "version": "1.0"
+                    },
+                    "servers": [{"url": "http://localhost:8080", "description": "API Gateway"}],
+                    "paths": {}
+                }
+                """, serviceName, errorMessage);
     }
 
     private String rewriteServers(String openApiJson) {
