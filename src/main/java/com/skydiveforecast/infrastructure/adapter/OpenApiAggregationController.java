@@ -31,22 +31,22 @@ public class OpenApiAggregationController {
 
     @GetMapping(value = "/v3/api-docs/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getUsersApiDocs() {
-        return fetchApiDocs(userServiceUrl, "users");
+        return fetchApiDocsFromPath(userServiceUrl, "/v3/api-docs", "users");
     }
 
     @GetMapping(value = "/v3/api-docs/analyses", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getAnalysesApiDocs() {
-        return fetchApiDocs(analysisServiceUrl, "analyses");
+        return fetchApiDocsFromPath(analysisServiceUrl, "/v3/api-docs/analyses", "analyses");
     }
 
     @GetMapping(value = "/v3/api-docs/locations", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getLocationsApiDocs() {
-        return fetchApiDocs(locationServiceUrl, "locations");
+        return fetchApiDocsFromPath(locationServiceUrl, "/v3/api-docs/locations", "locations");
     }
 
-    private Mono<String> fetchApiDocs(String serviceUrl, String serviceName) {
+    private Mono<String> fetchApiDocsFromPath(String serviceUrl, String path, String serviceName) {
         return webClient.get()
-                .uri(serviceUrl + "/v3/api-docs")
+                .uri(serviceUrl + path)
                 .retrieve()
                 .bodyToMono(String.class)
                 .timeout(TIMEOUT)
