@@ -31,7 +31,7 @@ public class OpenApiAggregationController {
 
     @GetMapping(value = "/v3/api-docs/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getUsersApiDocs() {
-        return fetchApiDocsFromPath(userServiceUrl, "/v3/api-docs", "users");
+        return fetchApiDocsFromPath(userServiceUrl, "/v3/api-docs/users", "users");
     }
 
     @GetMapping(value = "/v3/api-docs/analyses", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,7 +52,8 @@ public class OpenApiAggregationController {
                 .timeout(TIMEOUT)
                 .map(this::rewriteServers)
                 .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("Error fetching API docs for {}: {} - {}", serviceName, e.getStatusCode(), e.getMessage());
+                    log.error("Error fetching API docs for {}: {} - {}", serviceName, e.getStatusCode(),
+                            e.getMessage());
                     return Mono.just(createErrorApiDoc(serviceName, "Service returned error: " + e.getStatusCode()));
                 })
                 .onErrorResume(Exception.class, e -> {
@@ -77,7 +78,7 @@ public class OpenApiAggregationController {
     }
 
     private String rewriteServers(String openApiJson) {
-        return openApiJson.replaceAll("\"servers\":\\[\\{[^\\]]+\\]", 
+        return openApiJson.replaceAll("\"servers\":\\[\\{[^\\]]+\\]",
                 "\"servers\":[{\"url\":\"http://localhost:8080\",\"description\":\"API Gateway\"}]");
     }
 }
