@@ -2,7 +2,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     
-    <springProperty scope="context" name="appName" source="spring.application.name"/>
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="gateway"/>
     <springProperty scope="context" name="lokiUrl" source="loki.url" defaultValue="http://localhost:3100/loki/api/v1/push"/>
     
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -12,24 +12,17 @@
     </appender>
 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <http>
+        <http class="com.github.loki4j.logback.ApacheHttpSender">
             <url>${lokiUrl}</url>
             <connectionTimeoutMs>5000</connectionTimeoutMs>
             <requestTimeoutMs>5000</requestTimeoutMs>
         </http>
         <format>
             <label>
-                <pattern>application=${appName},host=${HOSTNAME},level=%level</pattern>
+                <pattern>app=${appName},host=${HOSTNAME},level=%level</pattern>
             </label>
-            <message>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
-            </message>
-            <structuredMetadata>false</structuredMetadata>
+            <message class="com.github.loki4j.logback.JsonLayout"/>
         </format>
-        <batchSize>100</batchSize>
-        <batchTimeoutMs>10000</batchTimeoutMs>
-        <sendQueueMaxBytes>41943040</sendQueueMaxBytes>
-        <dropRateLimitedBatches>true</dropRateLimitedBatches>
     </appender>
 
     <appender name="ASYNC_LOKI" class="ch.qos.logback.classic.AsyncAppender">
