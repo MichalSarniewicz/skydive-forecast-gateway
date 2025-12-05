@@ -4,18 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.skydiveforecast</groupId>
-    <artifactId>skydive-forecast-gateway</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <name>skydive-forecast</name>
-    <description>Skydive Forecast - API Gateway with Spring Cloud Gateway and Swagger aggregation</description>
-
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
+    <!-- Parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -23,12 +12,33 @@
         <relativePath/>
     </parent>
 
+    <!-- Project Coordinates -->
+    <groupId>org.skydiveforecast</groupId>
+    <artifactId>skydive-forecast-gateway</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>skydive-forecast-gateway</name>
+    <description>Skydive Forecast - API Gateway with Spring Cloud Gateway and Swagger aggregation</description>
+
+    <!-- Properties -->
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Spring Cloud -->
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+
+        <!-- Library Versions -->
+        <springdoc.version>2.8.13</springdoc.version>
+        <loki4j.version>2.0.1</loki4j.version>
+    </properties>
+
+    <!-- Dependency Management -->
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2025.0.0</version>
+                <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -36,6 +46,9 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- ==================== -->
+        <!-- Spring Cloud Gateway -->
+        <!-- ==================== -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-gateway-server-webflux</artifactId>
@@ -44,21 +57,26 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
+
+        <!-- ==================== -->
+        <!-- Spring Cloud         -->
+        <!-- ==================== -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <version>4.3.0</version>
         </dependency>
+
+        <!-- ==================== -->
+        <!-- Spring Boot Starters -->
+        <!-- ==================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
@@ -71,19 +89,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
-            <version>2.8.13</version>
-        </dependency>
+
+        <!-- ==================== -->
+        <!-- Observability        -->
+        <!-- ==================== -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.loki4j</groupId>
-            <artifactId>loki-logback-appender</artifactId>
-            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -92,6 +104,20 @@
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.loki4j</groupId>
+            <artifactId>loki-logback-appender</artifactId>
+            <version>${loki4j.version}</version>
+        </dependency>
+
+        <!-- ==================== -->
+        <!-- API Documentation    -->
+        <!-- ==================== -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
     </dependencies>
 
