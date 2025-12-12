@@ -17,18 +17,10 @@
         </http>
         <format>
             <label>
-                <pattern>app=${appName},host=${HOSTNAME},level=%level</pattern>
+                <pattern>app=${appName},job=${appName},service_name=${appName}</pattern>
             </label>
             <message>
-                <pattern>
-                    {
-                    "level":"%level",
-                    "class":"%logger{36}",
-                    "thread":"%thread",
-                    "message": "%message",
-                    "context": "%mdc"
-                    }
-                </pattern>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             </message>
         </format>
     </appender>
