@@ -12,17 +12,17 @@
     </appender>
 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <labels>
+            app=${appName}
+            job=${appName}
+            service_name=${appName}
+        </labels>
+        <message>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </message>
         <http>
             <url>${lokiUrl}</url>
         </http>
-        <format>
-            <label>
-                <pattern>app=${appName},job=${appName},service_name=${appName}</pattern>
-            </label>
-            <message>
-                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-            </message>
-        </format>
     </appender>
 
     <appender name="ASYNC_LOKI" class="ch.qos.logback.classic.AsyncAppender">
