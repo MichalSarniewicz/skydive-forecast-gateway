@@ -1,5 +1,7 @@
 # Skydive Forecast - Gateway
 
+[![CI Pipeline](https://github.com/MichalSarniewicz/skydive-forecast-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/MichalSarniewicz/skydive-forecast-gateway/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/MichalSarniewicz/skydive-forecast-gateway/branch/master/graph/badge.svg)](https://codecov.io/gh/MichalSarniewicz/skydive-forecast-gateway)
 [![Java](https://img.shields.io/badge/Java-21-green?logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://www.docker.com/)
