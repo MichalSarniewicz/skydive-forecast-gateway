@@ -13,7 +13,7 @@
     </parent>
 
     <!-- Project Coordinates -->
-    <groupId>org.skydiveforecast</groupId>
+    <groupId>com.skydiveforecast</groupId>
     <artifactId>skydive-forecast-gateway</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>skydive-forecast-gateway</name>
